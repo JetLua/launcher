@@ -1,0 +1,78 @@
+﻿<Window x:Class="launcher.Main"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:launcher"
+    mc:Ignorable="d"
+    Title="Launcher" 
+    Height="300" 
+    Width="300"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    WindowStartupLocation="CenterScreen"
+    Background="#00000000"
+>
+    <Grid>
+        <Border Padding="4" CornerRadius="4" Background="#7F000000">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <!--输入框-->
+                <TextBox 
+                    Grid.Column="0"
+                    Grid.Row="0" TextChanged="TextBox_TextChanged"
+                    Background="#75000000"
+                    Height="28"
+                    FontSize="14"
+                    FontStyle="Normal"
+                    Foreground="#fff"
+                    VerticalContentAlignment="Center"
+                ></TextBox>
+
+                <!--分割线-->
+                <Rectangle 
+                    Height="1"
+                    Grid.Column="0"
+                    Grid.Row="1" 
+                    Margin="0,8" Fill="White"
+                >
+                </Rectangle>
+
+                <!--分类列表-->
+                <ScrollViewer
+                    Grid.Column="0"    
+                    Grid.Row="2"
+                    VerticalScrollBarVisibility="Hidden"
+                >
+                    <TextBox Height="800"
+                        TextWrapping="WrapWithOverflow"         
+                    >
+                        A
+                        B
+                        C
+                        D
+                        E
+                        F
+                        G
+                        H
+                        I
+                        J
+                        K
+                        L
+                        M
+                    </TextBox>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+
+
+</Window>

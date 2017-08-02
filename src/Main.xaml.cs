@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
 
 namespace launcher {
     /// <summary>
@@ -20,10 +21,27 @@ namespace launcher {
     public partial class Main : Window {
         public Main() {
             InitializeComponent();
+
+            //获取scrollview
+            var category = (ListBox)FindName("category");
+            Trace.WriteLine(category);
+            Category[] categories = new Category[6];
+            for (var i = 0; i < 6; i++) {
+                categories[i] = new Category();
+                categories[i].Name = "小楼一夜听春雨";
+            }
+            category.ItemsSource = categories;
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e) {
+        private void OnDrop(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                var name = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                Trace.WriteLine(name);
+            }
+        }
 
+        private void OnMouseDown(object sender, MouseButtonEventArgs e) {
+            DragMove();
         }
     }
 }

@@ -12,7 +12,10 @@
     AllowsTransparency="True"
     WindowStartupLocation="CenterScreen"
     Background="#00000000"
+    AllowDrop="True"
+    MouseLeftButtonDown="OnMouseDown"
 >
+
     <Grid>
         <Border Padding="4" CornerRadius="4" Background="#7F000000">
             <Grid>
@@ -28,7 +31,7 @@
                 <!--输入框-->
                 <TextBox 
                     Grid.Column="0"
-                    Grid.Row="0" TextChanged="TextBox_TextChanged"
+                    Grid.Row="0" 
                     Background="#75000000"
                     Height="28"
                     FontSize="14"
@@ -51,24 +54,56 @@
                     Grid.Column="0"    
                     Grid.Row="2"
                     VerticalScrollBarVisibility="Hidden"
+                    AllowDrop="True"
+                    DragDrop.Drop="OnDrop"
                 >
-                    <TextBox Height="800"
-                        TextWrapping="WrapWithOverflow"         
+                    <ListBox 
+                        Name="category"
+                        ItemsSource="{Binding}" 
+                        Height="Auto"
                     >
-                        A
-                        B
-                        C
-                        D
-                        E
-                        F
-                        G
-                        H
-                        I
-                        J
-                        K
-                        L
-                        M
-                    </TextBox>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel 
+                                    Orientation="Horizontal"
+                                    Height="Auto"
+                                    ItemWidth="70"
+                                    Width="{Binding (FrameworkElement.ActualWidth), 
+                                        RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+                                ></WrapPanel>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Image 
+                                        Source="https://cdn.lufei.so/image/avatar.png"
+                                        Width="50"       
+                                        Height="50"
+                                        Grid.Column="0"
+                                        Grid.Row="0"
+                                        HorizontalAlignment="Stretch"
+                                    ></Image>
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        Grid.Row="1"
+                                        Text="{Binding Path=Name}"
+                                        HorizontalAlignment="Center"
+                                        TextTrimming="CharacterEllipsis"
+                                        Margin="0,4,0,0"
+                                    ></TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </ScrollViewer>
             </Grid>
         </Border>

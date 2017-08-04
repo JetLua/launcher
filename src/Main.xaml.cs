@@ -24,13 +24,17 @@ namespace launcher {
 
             //获取scrollview
             var category = (ListBox)FindName("category");
-            Trace.WriteLine(category);
-            Category[] categories = new Category[6];
-            for (var i = 0; i < 6; i++) {
-                categories[i] = new Category();
-                categories[i].Name = "小楼一夜听春雨";
+            var items = (ListBox)FindName("list");
+
+            const int j = 10;
+            Category[] categories = new Category[j];
+            for (var i = 0; i < j; i++) {
+                categories[i] = new Category() {
+                    Name = "小楼一夜听春雨"
+                };
             }
             category.ItemsSource = categories;
+            items.ItemsSource = categories;
         }
 
         private void OnDrop(object sender, DragEventArgs e) {
@@ -42,6 +46,20 @@ namespace launcher {
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e) {
             DragMove();
+        }
+
+        private void OnListScroll(object sender, MouseWheelEventArgs e) {
+            ScrollViewer scroller = (ScrollViewer)sender;
+            scroller.ScrollToVerticalOffset(scroller.VerticalOffset - e.Delta);
+            e.Handled = true;
+        }
+
+        private void OnCategoryScroll(object sender, MouseWheelEventArgs e) {
+            ListBox box = (ListBox)sender;
+            var border = (Border)VisualTreeHelper.GetChild(box, 0);
+            var scroller = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
+            scroller.ScrollToHorizontalOffset(scroller.VerticalOffset - e.Delta);
+            e.Handled = true;
         }
     }
 }

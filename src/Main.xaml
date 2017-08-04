@@ -7,20 +7,28 @@
     mc:Ignorable="d"
     Title="Launcher" 
     Height="300" 
-    Width="300"
+    Width="302"
     WindowStyle="None"
     AllowsTransparency="True"
     WindowStartupLocation="CenterScreen"
-    Background="#00000000"
+    Background="Transparent"
     AllowDrop="True"
     MouseLeftButtonDown="OnMouseDown"
 >
+    <Window.Resources>
+        <Border 
+            x:Key="mask"
+            Background="White"
+            BorderBrush="#FF3B5998"
+            BorderThickness=".5"
+            CornerRadius="13"/>
+    </Window.Resources>
 
     <Grid>
         <Border Padding="4" CornerRadius="4" Background="#7F000000">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -29,7 +37,7 @@
                 </Grid.RowDefinitions>
 
                 <!--输入框-->
-                <TextBox 
+                <!--<TextBox 
                     Grid.Column="0"
                     Grid.Row="0" 
                     Background="#75000000"
@@ -38,14 +46,81 @@
                     FontStyle="Normal"
                     Foreground="#fff"
                     VerticalContentAlignment="Center"
-                ></TextBox>
+                ></TextBox>-->
+                
+                <ListBox 
+                    Name="category" 
+                    ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                    PreviewMouseWheel="OnCategoryScroll"
+                    Background="Transparent"
+                    BorderThickness="0"
+                >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel 
+                                Orientation="Horizontal"
+                                Height="Auto"
+                                HorizontalAlignment="Center"
+                                Width="{Binding (FrameworkElement.ActualWidth), 
+                                    RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+                            ></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Margin" Value="0,0,0,0"></Setter>
+                            <Setter Property="BorderThickness" Value="0"></Setter>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border 
+                                            Name="bkg" 
+                                            Padding="6" 
+                                            Margin="0"
+                                            CornerRadius="6"
+                                        >
+                                            <ContentPresenter 
+                                                HorizontalAlignment="Center"
+                                                Margin="0"
+                                                ToolTip="{Binding Name}"
+                                            ></ContentPresenter>
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsMouseOver" Value="True"></Condition>
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="Background" TargetName="bkg" Value="#7f000000"></Setter>
+                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                            </MultiTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
+                    <!--item 数据模版-->
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding Path=Name}"
+                                HorizontalAlignment="Center"
+                                Foreground="White"
+                                Margin="2"
+                            ></TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
                 <!--分割线-->
                 <Rectangle 
                     Height="1"
                     Grid.Column="0"
                     Grid.Row="1" 
-                    Margin="0,8" Fill="White"
+                    Margin="0" Fill="BlueViolet"
                 >
                 </Rectangle>
 
@@ -54,29 +129,73 @@
                     Grid.Column="0"    
                     Grid.Row="2"
                     VerticalScrollBarVisibility="Hidden"
-                    AllowDrop="True"
-                    DragDrop.Drop="OnDrop"
+                    CanContentScroll="True"
+                    PreviewMouseWheel="OnListScroll"
+                    BorderThickness="0"
+                    Margin="0"
+                    Padding="0"
                 >
                     <ListBox 
-                        Name="category"
+                        Name="list"
                         ItemsSource="{Binding}" 
-                        Height="Auto"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Margin="0"
+                        Padding="0"
                     >
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel 
                                     Orientation="Horizontal"
                                     Height="Auto"
-                                    ItemWidth="70"
+                                    ItemWidth="73"
+                                    HorizontalAlignment="Center"
                                     Width="{Binding (FrameworkElement.ActualWidth), 
                                         RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
                                 ></WrapPanel>
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                         
+                        <!--item 样式-->
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Margin" Value="0,0,0,6"></Setter>
+                                <Setter Property="BorderThickness" Value="0"></Setter>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border 
+                                                Name="bkg" 
+                                                Padding="6" 
+                                                Margin="0"
+                                                CornerRadius="6"
+                                            >
+                                                <ContentPresenter 
+                                                    HorizontalAlignment="Center"
+                                                    Margin="0"
+                                                    ToolTip="{Binding Name}"
+                                                ></ContentPresenter>
+                                            </Border>
+                                            
+                                            <ControlTemplate.Triggers>
+                                                <MultiTrigger>
+                                                    <MultiTrigger.Conditions>
+                                                        <Condition Property="IsMouseOver" Value="True"></Condition>
+                                                    </MultiTrigger.Conditions>
+                                                    <Setter Property="Background" TargetName="bkg" Value="#7f000000"></Setter>
+                                                    <Setter Property="Cursor" Value="Hand"></Setter>
+                                                </MultiTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        
+                        <!--item 数据模版-->
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid HorizontalAlignment="Stretch">
+                                <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
@@ -90,14 +209,16 @@
                                         Height="50"
                                         Grid.Column="0"
                                         Grid.Row="0"
-                                        HorizontalAlignment="Stretch"
-                                    ></Image>
+                                        HorizontalAlignment="Center"
+                                    >
+                                    </Image>
                                     <TextBlock
                                         Grid.Column="0"
                                         Grid.Row="1"
                                         Text="{Binding Path=Name}"
                                         HorizontalAlignment="Center"
                                         TextTrimming="CharacterEllipsis"
+                                        Foreground="White"
                                         Margin="0,4,0,0"
                                     ></TextBlock>
                                 </Grid>
@@ -108,6 +229,4 @@
             </Grid>
         </Border>
     </Grid>
-
-
 </Window>

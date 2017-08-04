@@ -1,40 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Diagnostics;
+using System.IO;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System;
+
+
+
 
 namespace launcher {
     /// <summary>
     /// Main.xaml 的交互逻辑
     /// </summary>
     public partial class Main : Window {
+
+        private const string FILE_NAME = "data.json";
+
+        private ListBox Categories;
+        private ListBox Items;
+
         public Main() {
             InitializeComponent();
 
             //获取scrollview
-            var category = (ListBox)FindName("category");
-            var items = (ListBox)FindName("list");
+            Categories = (ListBox)FindName("category");
+            Items = (ListBox)FindName("list");
 
-            const int j = 10;
-            Category[] categories = new Category[j];
-            for (var i = 0; i < j; i++) {
-                categories[i] = new Category() {
-                    Name = "小楼一夜听春雨"
-                };
+            ReadData();
+        }
+
+
+        private Dictionary<string, string[]> Parse(string json) {
+            Dictionary<string, string[]> categories = new Dictionary<string, string[]>();
+            try {
+                categories = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(json);
+            } catch (Exception err) {
+                System.Windows.Forms.MessageBox.Show(err.ToString());
             }
-            category.ItemsSource = categories;
-            items.ItemsSource = categories;
+            return categories;            
+        }
+
+        private async void ReadData() {
+            if (File.Exists(FILE_NAME)) { 
+                var stream = new StreamReader(FILE_NAME);
+                var txt = await stream.ReadToEndAsync();
+                var _categories = Parse(txt);
+                Category[] categories = new Category[_categories.Count];
+                int i = 0;
+                foreach(var key in _categories.Keys) {
+                    categories.SetValue(new Category() {
+                        Name = key,
+                        Items = _categories[key]
+                    }, i++);
+                }
+                Categories.ItemsSource = categories;
+                Items.ItemsSource = categories;
+            } else {
+                new FileStream(FILE_NAME, FileMode.CreateNew);
+            }
         }
 
         private void OnDrop(object sender, DragEventArgs e) {

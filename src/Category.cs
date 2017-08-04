@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace launcher {
     class Category {
         public string Name { get; set; }
-        public Dictionary<string, string>[] Items { get; set; }
+        public string[] Items { get; set; }
     }
 }

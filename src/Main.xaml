@@ -19,9 +19,10 @@
         <Border 
             x:Key="mask"
             Background="White"
-            BorderBrush="#FF3B5998"
-            BorderThickness=".5"
-            CornerRadius="13"/>
+            BorderBrush="White"
+            Width="50"
+            Height="50"
+            CornerRadius="4"/>
     </Window.Resources>
 
     <Grid>
@@ -54,6 +55,7 @@
                     PreviewMouseWheel="OnCategoryScroll"
                     Background="Transparent"
                     BorderThickness="0"
+                    ItemsSource="{Binding}"
                 >
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -120,7 +122,8 @@
                     Height="1"
                     Grid.Column="0"
                     Grid.Row="1" 
-                    Margin="0" Fill="BlueViolet"
+                    Margin="0,2,0,4"
+                    Fill="#8bc34a"
                 >
                 </Rectangle>
 
@@ -134,6 +137,7 @@
                     BorderThickness="0"
                     Margin="0"
                     Padding="0"
+                    
                 >
                     <ListBox 
                         Name="list"
@@ -142,6 +146,8 @@
                         BorderThickness="0"
                         Margin="0"
                         Padding="0"
+                        AllowDrop="True"
+                        MouseLeftButtonDown="OnMouseDown"
                     >
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -211,7 +217,11 @@
                                         Grid.Row="0"
                                         HorizontalAlignment="Center"
                                     >
+                                        <Image.OpacityMask>
+                                            <VisualBrush Visual="{Binding Source={StaticResource mask}}"></VisualBrush>
+                                        </Image.OpacityMask>
                                     </Image>
+                                    
                                     <TextBlock
                                         Grid.Column="0"
                                         Grid.Row="1"

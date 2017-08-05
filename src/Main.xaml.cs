@@ -7,8 +7,8 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System;
-
-
+using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace launcher {
     /// <summary>
@@ -18,15 +18,16 @@ namespace launcher {
 
         private const string FILE_NAME = "data.json";
 
-        private ListBox Categories;
-        private ListBox Items;
+        private ListBox CategoryBox;
+        private ListBox ItemBox;
+        private ObservableCollection<Category> Categories = new ObservableCollection<Category>();
 
         public Main() {
             InitializeComponent();
 
             //获取scrollview
-            Categories = (ListBox)FindName("category");
-            Items = (ListBox)FindName("list");
+            CategoryBox = FindName("category") as ListBox;
+            ItemBox = FindName("list") as ListBox;
 
             ReadData();
         }
@@ -39,30 +40,29 @@ namespace launcher {
             } catch (Exception err) {
                 System.Windows.Forms.MessageBox.Show(err.ToString());
             }
-            return categories;            
+            return categories;
         }
 
         private async void ReadData() {
             if (File.Exists(FILE_NAME)) { 
                 var stream = new StreamReader(FILE_NAME);
                 var txt = await stream.ReadToEndAsync();
-                var _categories = Parse(txt);
+                var categories = Parse(txt);
 
-                if (_categories== null) {
+                if (categories == null || categories.Count == 0) {
                     MessageBox.Show("无数据");
                     return;
                 }
 
-                Category[] categories = new Category[_categories.Count];
-                int i = 0;
-                foreach (var key in _categories.Keys) {
-                    categories.SetValue(new Category() {
+                foreach (var key in categories.Keys) {
+                    Categories.Add(new Category() {
                         Name = key,
-                        Items = _categories[key]
-                    }, i++);
+                        Items = categories[key]
+                    });
                 }
-                Categories.ItemsSource = categories;
-                Items.ItemsSource = categories;
+
+                CategoryBox.ItemsSource = Categories;
+                ItemBox.ItemsSource = Categories;
             } else {
                 new FileStream(FILE_NAME, FileMode.CreateNew);
             }
@@ -73,6 +73,10 @@ namespace launcher {
                 var name = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
                 Trace.WriteLine(name);
             }
+            Categories.Add(new Category() {
+                Name = "ok",
+                Items = new string[] {"ok"}
+            });
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e) {
@@ -80,15 +84,15 @@ namespace launcher {
         }
 
         private void OnListScroll(object sender, MouseWheelEventArgs e) {
-            ScrollViewer scroller = (ScrollViewer)sender;
+            var scroller = sender as ScrollViewer;
             scroller.ScrollToVerticalOffset(scroller.VerticalOffset - e.Delta);
             e.Handled = true;
         }
 
         private void OnCategoryScroll(object sender, MouseWheelEventArgs e) {
-            ListBox box = (ListBox)sender;
-            var border = (Border)VisualTreeHelper.GetChild(box, 0);
-            var scroller = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
+            var box = sender as ListBox;
+            var border = VisualTreeHelper.GetChild(box, 0) as Border;
+            var scroller = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
             scroller.ScrollToHorizontalOffset(scroller.VerticalOffset - e.Delta);
             e.Handled = true;
         }

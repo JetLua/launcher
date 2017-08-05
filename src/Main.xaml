@@ -137,7 +137,8 @@
                     BorderThickness="0"
                     Margin="0"
                     Padding="0"
-                    
+                    AllowDrop="True"
+                    DragDrop.Drop="OnDrop"
                 >
                     <ListBox 
                         Name="list"

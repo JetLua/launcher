@@ -10,7 +10,6 @@ using System;
 
 
 
-
 namespace launcher {
     /// <summary>
     /// Main.xaml 的交互逻辑
@@ -48,9 +47,15 @@ namespace launcher {
                 var stream = new StreamReader(FILE_NAME);
                 var txt = await stream.ReadToEndAsync();
                 var _categories = Parse(txt);
+
+                if (_categories== null) {
+                    MessageBox.Show("无数据");
+                    return;
+                }
+
                 Category[] categories = new Category[_categories.Count];
                 int i = 0;
-                foreach(var key in _categories.Keys) {
+                foreach (var key in _categories.Keys) {
                     categories.SetValue(new Category() {
                         Name = key,
                         Items = _categories[key]

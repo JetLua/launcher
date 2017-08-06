@@ -44,7 +44,7 @@
       AssemblyFile="$(FodyPath)\Fody.dll" />
   <Target
       AfterTargets="AfterCompile"
-      Condition="Exists(@(IntermediateAssembly))"
+      Condition="Exists('@(IntermediateAssembly)') And '$(DesignTimeBuild)' != 'true'"
       Name="FodyTarget"
       DependsOnTargets="$(FodyDependsOnTargets)"
       Inputs="@(IntermediateAssembly->'%(FullPath)');$(FodyKeyFilePath);$(ProjectWeaverXml)"
@@ -61,9 +61,12 @@
           SignAssembly="$(FodySignAssembly)"
           ReferenceCopyLocalPaths="@(ReferenceCopyLocalPaths)"
           DefineConstants="$(DefineConstants)"
+          PackageDefinitions="@(PackageDefinitions->'%(ResolvedPath)')"
+          DebugSymbols="$(DebugSymbols)"
+          DebugType="$(DebugType)"
       >
 
-      <Output 
+      <Output
         TaskParameter="ExecutedWeavers"
         PropertyName="FodyExecutedWeavers" />
     </Fody.WeavingTask>
@@ -71,7 +74,7 @@
     <PropertyGroup>
       <FodyWeavingTargetWasRun>True</FodyWeavingTargetWasRun>
     </PropertyGroup>
-      
+
   </Target>
 
 
@@ -79,7 +82,7 @@
     TaskName="Fody.VerifyTask"
     AssemblyFile="$(FodyPath)\Fody.dll" />
   <Target Condition="'$(NCrunch)' != '1' And ('$(FodyWeavingTargetWasRun)' == 'True')"
-      AfterTargets="FodyTarget;AfterBuild"
+      AfterTargets="AfterBuild"
       Name="FodyVerifyTarget"
       DependsOnTargets="$(FodyVerifyDependsOnTargets)">
 

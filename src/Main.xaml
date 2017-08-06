@@ -211,16 +211,13 @@
                                         <RowDefinition></RowDefinition>
                                     </Grid.RowDefinitions>
                                     <Image 
-                                        Source="https://cdn.lufei.so/image/avatar.png"
                                         Width="50"       
                                         Height="50"
                                         Grid.Column="0"
                                         Grid.Row="0"
                                         HorizontalAlignment="Center"
+                                        Source="{Binding Path=Icon}"
                                     >
-                                        <Image.OpacityMask>
-                                            <VisualBrush Visual="{Binding Source={StaticResource mask}}"></VisualBrush>
-                                        </Image.OpacityMask>
                                     </Image>
                                     
                                     <TextBlock

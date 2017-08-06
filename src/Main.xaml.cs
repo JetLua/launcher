@@ -1,14 +1,15 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
+using System.Drawing;
 using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System;
-using System.Collections;
 using System.Collections.ObjectModel;
+using System.Windows.Media;
+using System.Runtime.InteropServices;
 
 namespace launcher {
     /// <summary>
@@ -57,7 +58,7 @@ namespace launcher {
                 foreach (var key in categories.Keys) {
                     Categories.Add(new Category() {
                         Name = key,
-                        Items = categories[key]
+                        Items = categories[key],
                     });
                 }
 
@@ -70,13 +71,34 @@ namespace launcher {
 
         private void OnDrop(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
-                var name = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-                Trace.WriteLine(name);
+                var path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                Categories.Add(new Category() {
+                    Name = "ok",
+                    Items = new string[] { "ok" },
+                    Icon = GetIcon(path)
+                });
             }
-            Categories.Add(new Category() {
-                Name = "ok",
-                Items = new string[] {"ok"}
-            });
+            
+        }
+
+        private ImageSource GetIcon(string path) {
+            var info = new Api.SHFILEINFO(true);
+            var cb = Marshal.SizeOf(info);
+            Api.SHGetFileInfo(path, 256, out info, (uint)cb, 0x000004000);
+            var guid = new Guid("46EB5926-582E-4017-9FDF-E8998DAA0950");
+            Api.SHGetImageList(0x4, ref guid, out IntPtr ppv);
+            var icon = Api.ImageList_GetIcon(ppv, info.iIcon, 0);
+            var img = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(
+                icon,
+                Int32Rect.Empty,
+                System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions()
+            );
+            Api.DestroyIcon(icon);
+            return img;
+        }
+
+        private void GetName() {
+
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e) {

@@ -14,8 +14,7 @@ namespace launcher {
     public partial class App : Application {
         private static Mutex id = null;
         protected override void OnStartup(StartupEventArgs e) {
-            bool flag;
-            id = new Mutex(true, "launcher", out flag);
+            id = new Mutex(true, "launcher", out bool flag);
             if (!flag) {
                 MessageBox.Show("已有运行实例");
                 Current.Shutdown();

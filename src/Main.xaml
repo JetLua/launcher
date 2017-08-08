@@ -4,6 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:launcher"
+    xmlns:props="clr-namespace:launcher.Properties"
     mc:Ignorable="d"
     Title="Launcher" 
     Height="300" 
@@ -14,6 +15,7 @@
     Background="Transparent"
     AllowDrop="True"
     MouseLeftButtonDown="OnDragMove"
+    ShowInTaskbar="False"
 >
     <Window.Resources>
         <Border 
@@ -24,7 +26,7 @@
             Height="50"
             CornerRadius="4"/>
         <BitmapImage x:Key="delete" UriSource="/Resources/delete.png"></BitmapImage>
-        <BitmapImage x:Key="lost" UriSource="/Resources/lost.png"></BitmapImage>
+        <BitmapImage x:Key="lost"  UriSource="/Resources/lost.png"></BitmapImage>
         <local:StateConverter x:Key="stateItem"></local:StateConverter>
         <local:StateConverter x:Key="stateCategory"></local:StateConverter>
     </Window.Resources>
@@ -269,7 +271,7 @@
                                         Grid.Column="0"
                                         Grid.Row="0"
                                         HorizontalAlignment="Center"
-                                        Source="{Binding Path=Icon}"
+                                        Source="{Binding Icon}"
                                     >
                                     </Image>
 

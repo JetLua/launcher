@@ -43,6 +43,16 @@ namespace launcher {
 
         [DllImport("comctl32.dll")]
         public static extern IntPtr ImageList_GetIcon(IntPtr himl, int i, uint fStyle);
+
+        [DllImport("shell32.dll")]
+        public static extern int SHDefExtractIcon(
+            string path, 
+            int index, 
+            uint flag,
+            out IntPtr bigIcon,
+            out IntPtr smallIcon,
+            uint size
+        );
     };
 }
 

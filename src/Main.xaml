@@ -13,7 +13,7 @@
     WindowStartupLocation="CenterScreen"
     Background="Transparent"
     AllowDrop="True"
-    MouseLeftButtonDown="OnMouseDown"
+    MouseLeftButtonDown="OnDragMove"
 >
     <Window.Resources>
         <Border 
@@ -23,6 +23,10 @@
             Width="50"
             Height="50"
             CornerRadius="4"/>
+        <BitmapImage x:Key="delete" UriSource="/Resources/delete.png"></BitmapImage>
+        <BitmapImage x:Key="lost" UriSource="/Resources/lost.png"></BitmapImage>
+        <local:StateConverter x:Key="stateItem"></local:StateConverter>
+        <local:StateConverter x:Key="stateCategory"></local:StateConverter>
     </Window.Resources>
 
     <Grid>
@@ -79,8 +83,10 @@
                                         <Border 
                                             Name="bkg" 
                                             Padding="6" 
-                                            Margin="0"
+                                            Margin="0,0,2,0"
                                             CornerRadius="6"
+                                            MouseLeftButtonUp="OnSelectCategory"
+                                            MouseRightButtonUp="OnEditCategory"
                                         >
                                             <ContentPresenter 
                                                 HorizontalAlignment="Center"
@@ -97,6 +103,13 @@
                                                 <Setter Property="Background" TargetName="bkg" Value="#7f000000"></Setter>
                                                 <Setter Property="Cursor" Value="Hand"></Setter>
                                             </MultiTrigger>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsSelected" Value="True"></Condition>
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="Background" TargetName="bkg" Value="#7f000000"></Setter>
+                                                <Setter Property="Cursor" Value="Hand"></Setter>
+                                            </MultiTrigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </Setter.Value>
@@ -107,12 +120,46 @@
                     <!--item 数据模版-->
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock
-                                Text="{Binding Path=Name}"
-                                HorizontalAlignment="Center"
-                                Foreground="White"
-                                Margin="2"
-                            ></TextBlock>
+                            <Grid>
+                                <TextBlock
+                                    Text="{Binding Name}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="2"
+                                    Foreground="White"
+                                    Visibility="{Binding Flag}"
+                                >
+                                </TextBlock>
+                                
+                                <TextBox
+                                    Text="{Binding Name}"    
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="8,2"
+                                    Foreground="White"
+                                    Background="Transparent"
+                                    Padding="0"
+                                    BorderThickness="0"
+                                    CaretBrush="White"
+                                    Visibility="{Binding Flag, Converter={StaticResource stateCategory}}"
+                                >
+                                    <TextBox.ContextMenu>
+                                        <ContextMenu Visibility="Collapsed"></ContextMenu>
+                                    </TextBox.ContextMenu>
+                                </TextBox>
+
+                                <Image
+                                    Width="16"
+                                    Height="16"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,-4,-6,0"
+                                    Source="{StaticResource delete}"
+                                    Visibility="{Binding Flag, Converter={StaticResource stateCategory}}"
+                                    MouseLeftButtonUp="OnDeleteCategory"
+                                >
+                                </Image>
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
@@ -141,14 +188,14 @@
                     DragDrop.Drop="OnDrop"
                 >
                     <ListBox 
-                        Name="list"
+                        Name="item"
                         ItemsSource="{Binding}" 
                         Background="Transparent"
                         BorderThickness="0"
                         Margin="0"
                         Padding="0"
                         AllowDrop="True"
-                        MouseLeftButtonDown="OnMouseDown"
+                        MouseLeftButtonDown="OnDragMove"
                     >
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -176,12 +223,16 @@
                                                 Padding="6" 
                                                 Margin="0"
                                                 CornerRadius="6"
+                                                MouseRightButtonUp="OnEditItem"
+                                                MouseLeftButtonUp="OnLaunch"
+                                                ToolTip="{Binding Name}"
                                             >
                                                 <ContentPresenter 
                                                     HorizontalAlignment="Center"
                                                     Margin="0"
-                                                    ToolTip="{Binding Name}"
-                                                ></ContentPresenter>
+                                                    Width="61"
+                                                >
+                                                </ContentPresenter>
                                             </Border>
                                             
                                             <ControlTemplate.Triggers>
@@ -210,6 +261,8 @@
                                         <RowDefinition></RowDefinition>
                                         <RowDefinition></RowDefinition>
                                     </Grid.RowDefinitions>
+
+                                    
                                     <Image 
                                         Width="50"       
                                         Height="50"
@@ -219,16 +272,49 @@
                                         Source="{Binding Path=Icon}"
                                     >
                                     </Image>
-                                    
+
+                                    <Image
+                                        Width="20"
+                                        Height="20"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Margin="0,-4,-4,0"
+                                        Grid.Column="0"
+                                        Grid.Row="0"
+                                        Source="{StaticResource delete}"
+                                        Visibility="{Binding Flag, Converter={StaticResource stateItem}}"
+                                        MouseLeftButtonUp="OnDeleteItem"
+                                    >
+                                    </Image>
+
                                     <TextBlock
                                         Grid.Column="0"
                                         Grid.Row="1"
-                                        Text="{Binding Path=Name}"
+                                        Text="{Binding Name}"
                                         HorizontalAlignment="Center"
                                         TextTrimming="CharacterEllipsis"
                                         Foreground="White"
                                         Margin="0,4,0,0"
+                                        Visibility="{Binding Flag}"
                                     ></TextBlock>
+
+                                    <TextBox
+                                        Grid.Column="0"    
+                                        Grid.Row="1"
+                                        Text="{Binding Name}"
+                                        Foreground="White"
+                                        Margin="0,4,0,0"
+                                        Padding="0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        HorizontalAlignment="Center"
+                                        CaretBrush="White"
+                                        Visibility="{Binding Flag, Converter={StaticResource stateItem}}"
+                                    >
+                                        <TextBox.ContextMenu>
+                                            <ContextMenu Visibility="Collapsed"></ContextMenu>
+                                        </TextBox.ContextMenu>
+                                    </TextBox>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

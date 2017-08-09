@@ -10,6 +10,7 @@ namespace launcher {
     /// </summary>
     public partial class App : Application {
         private static Mutex id = null;
+        public static Main MainBody = null;
         protected override void OnStartup(StartupEventArgs e) {
             id = new Mutex(true, "launcher", out bool flag);
             if (!flag) {
@@ -25,7 +26,8 @@ namespace launcher {
                     Text = "退出"
                 };
                 var autostart = new System.Windows.Forms.MenuItem() {
-                    Text = "开机启动"
+                    Text = "开机启动",
+                    Checked = IsAutostart()
                 };
                 exit.Click += OnExit;
                 autostart.Click += OnAutostart;
@@ -33,13 +35,25 @@ namespace launcher {
                 ctxMenu.MenuItems.Add(autostart);
                 ctxMenu.MenuItems.Add(exit);
 
-
-                new System.Windows.Forms.NotifyIcon() {
+                var notify = new System.Windows.Forms.NotifyIcon() {
                     Icon = launcher.Properties.Resources.icon,
                     Visible = true,
                     ContextMenu = ctxMenu
                 };
+
+                notify.MouseClick += OnClickNotify;
+                Current.Exit += OnExit;
+
+                SessionEnding += OnEnd;
             }
+        }
+
+        private void OnEnd(object sender, SessionEndingCancelEventArgs e) {
+            MainBody.Save();
+        }
+
+        private void OnClickNotify(object sender, System.Windows.Forms.MouseEventArgs e) {
+            Current.MainWindow.Activate();
         }
 
         private void AddAutostart() {
@@ -49,7 +63,9 @@ namespace launcher {
         }
 
         private void RemoveAutostart() {
-
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
+                key.DeleteValue("launcher", false);
+            }
         }
 
         private void OnAutostart(object sender, EventArgs e) {
@@ -65,7 +81,17 @@ namespace launcher {
         }
 
         private void OnExit(object sender, EventArgs e) {
+            //退出时保存数据
+            MainBody.Save();
             Current.Shutdown();
         }
+
+        private bool IsAutostart() {
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
+                return key.GetValue("launcher") == null ? false : true;
+            }
+        }
+
+        
     }
 }

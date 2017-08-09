@@ -1,23 +1,41 @@
-﻿using System.Windows;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.IO;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System;
-using System.Collections.ObjectModel;
 using System.Windows.Media;
-using System.Runtime.InteropServices;
-using System.Collections;
-using System.Diagnostics;
 
 namespace launcher {
     /// <summary>
     /// Main.xaml 的交互逻辑
     /// </summary>
+    
+    class Format {
+        public static string Save(ObservableCollection<launcher.Category> categories) {
+            var _categories = new Dictionary<string, ArrayList>();
+            for (var i = 0; i < categories.Count - 1; i++) {
+                var category = categories[i];
+                var items = new ArrayList();
+                foreach (var item in category.Items) {
+                    items.Add(new Dictionary<string, string> {
+                        { "Name", item.Name },
+                        { "Path", item.Path }
+                    });
+                }
+                _categories[category.Name] = items;
+            }
+            return JsonConvert.SerializeObject(_categories);
+        }
+    }
+
     public partial class Main : Window {
 
-        private const string FILE_NAME = "data.json";
+        private string FILE_NAME = String.Concat(AppDomain.CurrentDomain.BaseDirectory, "data.json");
 
         private ListBox CategoryBox;
         private ListBox ItemBox;
@@ -30,6 +48,9 @@ namespace launcher {
             //获取scrollview
             CategoryBox = FindName("category") as ListBox;
             ItemBox = FindName("item") as ListBox;
+
+            //赋值给 app
+            App.MainBody = this;
 
             ReadData();
         }
@@ -101,13 +122,15 @@ namespace launcher {
                     Path = path,
                     Icon = GetIcon(path)
                 });
-
-                Save();
             }
         }
 
-        private void Save() {
-            Trace.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(Categories));
+        public void Save() {
+            using (var stream = new StreamWriter(FILE_NAME)) {
+                //stream.Write(JsonConvert.SerializeObject(Categories));
+                stream.Write(Format.Save(Categories));
+            }
+            //Format.Save(Categories);
         }
 
         private ImageSource GetIcon(string path) {
@@ -158,10 +181,12 @@ namespace launcher {
 
         }
 
+        //删除 item
         private void OnDeleteItem(object sender, MouseButtonEventArgs e) {
             var index = ItemBox.SelectedIndex;
             var item = Categories[CategoryIndex].Items[index];
             Categories[CategoryIndex].Items.RemoveAt(index);
+            e.Handled = true;
         }
 
         private void OnSelectCategory(object sender, MouseButtonEventArgs e) {
@@ -171,7 +196,7 @@ namespace launcher {
             //添加分类
             if (CategoryIndex + 1 == Categories.Count) {
                 Categories.Insert(CategoryIndex, new Category() {
-                    Name = "新建分类",
+                    Name = string.Concat("新建分类@", Categories.Count - 1),
                     Items = new ObservableCollection<Item>()
                 });
             }
@@ -197,6 +222,7 @@ namespace launcher {
 
             item.Flag =
                 item.Flag == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+
         }
 
         //启动

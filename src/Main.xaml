@@ -70,9 +70,7 @@
                             <StackPanel 
                                 Orientation="Horizontal"
                                 Height="Auto"
-                                HorizontalAlignment="Center"
-                                Width="{Binding (FrameworkElement.ActualWidth), 
-                                    RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"
+                                VerticalAlignment="Center"
                             ></StackPanel>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>

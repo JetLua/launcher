@@ -198,7 +198,6 @@ namespace launcher {
 
         //启动
         private void OnLaunch(object sender, MouseButtonEventArgs e) {
-            Trace.WriteLine("launch");
             var index = ItemBox.SelectedIndex;
             var path = Categories[CategoryIndex].Items[index].Path;
             Process.Start(path);
@@ -207,8 +206,6 @@ namespace launcher {
 
         //开始拖动 item
         private void OnItemDragStart(object sender, MouseButtonEventArgs e) {
-
-            Trace.WriteLine("drag item");
             var item = ((sender as ListBoxItem).DataContext) as Item;
 
             if (sender is ListBoxItem && item.Flag == Visibility.Visible) {
@@ -228,7 +225,6 @@ namespace launcher {
                 var tIndex = ItemBox.Items.IndexOf(target.DataContext);
                 var sIndex = ItemBox.Items.IndexOf(source.DataContext);
 
-                //Trace.WriteLine(string.Concat(tIndex, ",", sIndex));
                 target.IsSelected = true;
 
                 if (tIndex == sIndex) {
@@ -243,14 +239,12 @@ namespace launcher {
         }
 
         private void OnItemBoxDragOver(object sender, DragEventArgs e) {
-            //版本一：
             var scroller = sender as ScrollViewer;
-            var pointInBox = e.GetPosition(ItemBox);
-            var pointInScroller = e.GetPosition(scroller);
+            var point = e.GetPosition(scroller);
             var delta = 3;
-            if (pointInScroller.Y < scroller.ActualHeight / 2 - 25) {
+            if (point.Y < scroller.ActualHeight / 2 - 25) {
                 scroller.ScrollToVerticalOffset(scroller.VerticalOffset - delta);
-            } else if (pointInScroller.Y > scroller.ActualHeight / 2 + 25) {
+            } else if (point.Y > scroller.ActualHeight / 2 + 25) {
                 scroller.ScrollToVerticalOffset(scroller.VerticalOffset + delta);
             }
         }
@@ -283,8 +277,6 @@ namespace launcher {
         //选择分类
         private void OnSelectCategory(object sender, MouseButtonEventArgs e) {
 
-            Trace.WriteLine("select category");
-
             CategoryIndex = CategoryBox.SelectedIndex;
 
             //点击 + ：总是最后一个
@@ -301,12 +293,10 @@ namespace launcher {
 
         //拖拽开始
         private void OnCategoryDragStart(object sender, MouseButtonEventArgs e) {
-            Trace.WriteLine("category drag");
             var category = ((sender as ListBoxItem).DataContext) as Category;
             if (sender is ListBoxItem && category.Flag == Visibility.Visible) {
                 var item = sender as ListBoxItem;
                 DragDrop.DoDragDrop(item, item, DragDropEffects.Move);
-                //Trace.WriteLine(CategoryBox.SelectedIndex);
             } else {
                 (sender as ListBoxItem).IsSelected = true;
             }
@@ -314,7 +304,6 @@ namespace launcher {
 
         //放下
         private void OnCategoryDrop(object sender, DragEventArgs e) {
-            Trace.WriteLine("category drop");
             if (e.Data.GetDataPresent(typeof(ListBoxItem))) {
                 var target = sender as ListBoxItem;
                 var source = e.Data.GetData(typeof(ListBoxItem)) as ListBoxItem;
@@ -322,10 +311,8 @@ namespace launcher {
                 var tIndex = CategoryBox.Items.IndexOf(target.DataContext);
                 var sIndex = CategoryBox.Items.IndexOf(source.DataContext);
 
-                target.IsSelected = true;
-                CategoryIndex = CategoryBox.SelectedIndex;
-                Trace.WriteLine(CategoryBox.SelectedIndex);
-
+                CategoryIndex = tIndex;
+                source.IsSelected = true;
 
                 //判断目标item是否是加号
                 if (tIndex == Categories.Count - 1) {
@@ -335,6 +322,8 @@ namespace launcher {
                             Name = string.Concat("新建分类@", Categories.Count - 1),
                             Items = new ObservableCollection<Item>()
                         });
+
+                        (CategoryBox.ItemContainerGenerator.ContainerFromIndex(tIndex) as ListBoxItem).IsSelected = true;
                     }
                 } else {
                     Categories.Move(sIndex, tIndex);
@@ -346,11 +335,15 @@ namespace launcher {
         }
 
         private void OnCategoryDragOver(object sender, DragEventArgs e) {
-            var box = sender as ListBox;
-            var border = VisualTreeHelper.GetChild(box, 0) as Border;
+            var border = VisualTreeHelper.GetChild(CategoryBox, 0) as Border;
             var scroller = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-            var point = e.GetPosition(CategoryBox);
-            scroller.ScrollToHorizontalOffset(point.X - box.ActualWidth / 2);
+            var point = e.GetPosition(scroller);
+            var delta = 3;
+            if (point.X < scroller.ActualWidth / 2 - 25) {
+                scroller.ScrollToHorizontalOffset(scroller.HorizontalOffset - delta);
+            } else if (point.X > scroller.ActualWidth / 2 + 25) {
+                scroller.ScrollToHorizontalOffset(scroller.HorizontalOffset + delta);
+            }
         }
     }
 }

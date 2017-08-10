@@ -25,14 +25,14 @@ namespace launcher {
                 var exit = new System.Windows.Forms.MenuItem() {
                     Text = "退出"
                 };
-                var autostart = new System.Windows.Forms.MenuItem() {
+                var autoStart = new System.Windows.Forms.MenuItem() {
                     Text = "开机启动",
-                    Checked = IsAutostart()
+                    Checked = IsAutoStart()
                 };
                 exit.Click += OnExit;
-                autostart.Click += OnAutostart;
+                autoStart.Click += OnAutostart;
 
-                ctxMenu.MenuItems.Add(autostart);
+                ctxMenu.MenuItems.Add(autoStart);
                 ctxMenu.MenuItems.Add(exit);
 
                 var notify = new System.Windows.Forms.NotifyIcon() {
@@ -53,7 +53,12 @@ namespace launcher {
         }
 
         private void OnClickNotify(object sender, System.Windows.Forms.MouseEventArgs e) {
-            Current.MainWindow.Activate();
+            if (Current.MainWindow.IsVisible) {
+                Current.MainWindow.Hide();
+            } else {
+                Current.MainWindow.Show();
+                Current.MainWindow.Activate();
+            }
         }
 
         private void AddAutostart() {
@@ -86,7 +91,7 @@ namespace launcher {
             Current.Shutdown();
         }
 
-        private bool IsAutostart() {
+        private bool IsAutoStart() {
             using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
                 return key.GetValue("launcher") == null ? false : true;
             }

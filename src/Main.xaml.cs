@@ -247,17 +247,12 @@ namespace launcher {
             var scroller = sender as ScrollViewer;
             var pointInBox = e.GetPosition(ItemBox);
             var pointInScroller = e.GetPosition(scroller);
-            var delta = 5;
-            if (pointInScroller.Y < scroller.ActualHeight / 2 + 25) {
+            var delta = 3;
+            if (pointInScroller.Y < scroller.ActualHeight / 2 - 25) {
                 scroller.ScrollToVerticalOffset(scroller.VerticalOffset - delta);
-            } else if (pointInScroller.Y > scroller.ActualHeight / 2 - 25) {
+            } else if (pointInScroller.Y > scroller.ActualHeight / 2 + 25) {
                 scroller.ScrollToVerticalOffset(scroller.VerticalOffset + delta);
             }
-
-            //版本二：
-            //var scroller = sender as ScrollViewer;
-            //var point = e.GetPosition(ItemBox);
-            //scroller.ScrollToVerticalOffset(point.Y - scroller.ActualHeight / 2);
         }
 
         /*

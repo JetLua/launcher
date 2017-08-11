@@ -77,7 +77,10 @@
 
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
-                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnCategoryDragStart"></EventSetter>
+                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnCategoryMouseDown"></EventSetter>
+                            <EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnCategoryMouseUp"></EventSetter>
+                            <EventSetter Event="MouseLeave" Handler="OnCategoryMouseLeave"></EventSetter>
+                            
                             <EventSetter Event="PreviewDrop" Handler="OnCategoryDrop"></EventSetter>
                             <EventSetter Event="PreviewMouseRightButtonUp" Handler="OnEditCategory"></EventSetter>
                             <Setter Property="AllowDrop" Value="True"></Setter>
@@ -217,7 +220,10 @@
                         <!--item 样式-->
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
-                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnItemDragStart"></EventSetter>
+                                <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnItemMouseDown"></EventSetter>
+                                <EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnItemMouseUp"></EventSetter>
+                                <EventSetter Event="MouseLeave" Handler="OnItemMouseLeave"></EventSetter>
+                                
                                 <EventSetter Event="PreviewDrop" Handler="OnItemDrop"></EventSetter>
                                 <EventSetter Event="PreviewMouseRightButtonUp" Handler="OnEditItem"></EventSetter>
                                 <Setter Property="AllowDrop" Value="True"></Setter>

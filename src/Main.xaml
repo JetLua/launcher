@@ -13,9 +13,8 @@
     AllowsTransparency="True"
     WindowStartupLocation="CenterScreen"
     Background="Transparent"
-    AllowDrop="True"
-    MouseLeftButtonDown="OnDragMove"
     ShowInTaskbar="False"
+    MouseLeftButtonDown="OnDragMove"
 >
     <Window.Resources>
         <Border 
@@ -332,6 +331,33 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </ScrollViewer>
+                
+                <Button
+                    Background="Transparent"
+                    Content="ok"
+                    Width="20"
+                    Height="20"
+                    Cursor="Hand"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Click="CloseWindow"
+                >
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Grid>
+                                            <Image
+                                                Source="{StaticResource delete}"    
+                                            ></Image>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
         </Border>
     </Grid>

@@ -53,6 +53,9 @@ namespace launcher {
             out IntPtr smallIcon,
             uint size
         );
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
     };
 }
 

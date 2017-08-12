@@ -29,8 +29,8 @@ namespace launcher {
                     Text = "开机启动",
                     Checked = IsAutoStart()
                 };
-                exit.Click += OnExit;
                 autoStart.Click += OnAutostart;
+                exit.Click += OnExit;
 
                 ctxMenu.MenuItems.Add(autoStart);
                 ctxMenu.MenuItems.Add(exit);
@@ -42,9 +42,11 @@ namespace launcher {
                 };
 
                 notify.MouseClick += OnClickNotify;
+
                 Current.Exit += OnExit;
 
                 SessionEnding += OnEnd;
+
             }
         }
 
@@ -53,12 +55,8 @@ namespace launcher {
         }
 
         private void OnClickNotify(object sender, System.Windows.Forms.MouseEventArgs e) {
-            if (Current.MainWindow.IsVisible) {
-                Current.MainWindow.Hide();
-            } else {
-                Current.MainWindow.Show();
-                Current.MainWindow.Activate();
-            }
+            Current.MainWindow.Show();
+            Current.MainWindow.Activate();
         }
 
         private void AddAutostart() {

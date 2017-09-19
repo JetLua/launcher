@@ -132,10 +132,8 @@ namespace launcher {
 
         public void Save() {
             using (var stream = new StreamWriter(FILE_NAME)) {
-                //stream.Write(JsonConvert.SerializeObject(categories));
                 stream.Write(Format.Save(categories));
             }
-            //Format.Save(categories);
         }
 
         private ImageSource GetIcon(string path) {
@@ -186,6 +184,7 @@ namespace launcher {
         //编辑 item
         private void OnEditItem(object sender, MouseButtonEventArgs e) {
             var index = itemBox.SelectedIndex;
+            if (index == -1) return;
             var item = categories[categoryIndex].Items[index];
 
             item.Flag =
@@ -211,6 +210,7 @@ namespace launcher {
         private void OnItemMouseUp(object sender, MouseButtonEventArgs e) {
             dragItem = false;
             var index = itemBox.SelectedIndex;
+            if (index == -1) return;
             var item = categories[categoryIndex].Items[index] as Item;
             if (item.Flag == Visibility.Visible) {
                 Process.Start(item.Path);
@@ -266,13 +266,13 @@ namespace launcher {
             //重新显示当前 item
             categoryIndex = 0;
             itemBox.ItemsSource = categories[categoryIndex].Items;
-
-            e.Handled = true;
         }
 
         //编辑分类
         private void OnEditCategory(object sender, MouseButtonEventArgs e) {
             var index = categoryBox.SelectedIndex;
+
+            if (index == -1) return;
             
             //+ 号不允许编辑
             if (index + 1 == categories.Count) return;
@@ -354,6 +354,8 @@ namespace launcher {
             }
         }
 
-       
+        private void CloseWindow(object sender, RoutedEventArgs e) {
+            Hide();
+        }
     }
 }

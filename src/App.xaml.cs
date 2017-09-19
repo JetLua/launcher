@@ -29,8 +29,8 @@ namespace launcher {
                     Text = "开机启动",
                     Checked = IsAutoStart()
                 };
-                exit.Click += OnExit;
                 autoStart.Click += OnAutostart;
+                exit.Click += OnExit;
 
                 ctxMenu.MenuItems.Add(autoStart);
                 ctxMenu.MenuItems.Add(exit);
@@ -42,9 +42,11 @@ namespace launcher {
                 };
 
                 notify.MouseClick += OnClickNotify;
+
                 Current.Exit += OnExit;
 
                 SessionEnding += OnEnd;
+
             }
         }
 
@@ -53,22 +55,18 @@ namespace launcher {
         }
 
         private void OnClickNotify(object sender, System.Windows.Forms.MouseEventArgs e) {
-            if (Current.MainWindow.IsVisible) {
-                Current.MainWindow.Hide();
-            } else {
-                Current.MainWindow.Show();
-                Current.MainWindow.Activate();
-            }
+            Current.MainWindow.Show();
+            Current.MainWindow.Activate();
         }
 
         private void AddAutostart() {
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
                 key.SetValue("launcher", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
             }
         }
 
         private void RemoveAutostart() {
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
                 key.DeleteValue("launcher", false);
             }
         }
@@ -92,7 +90,7 @@ namespace launcher {
         }
 
         private bool IsAutoStart() {
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
                 return key.GetValue("launcher") == null ? false : true;
             }
         }
